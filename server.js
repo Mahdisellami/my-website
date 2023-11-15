@@ -38,6 +38,9 @@ app.get("/", (req, res) => {
   res.json({ message: "Welcome to bahta application." });
 });
 
+
+require("./app/routes/truths.routes")(app);
+
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {

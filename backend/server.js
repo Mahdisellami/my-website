@@ -1,5 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
+
 const cors = require("cors");
 
 const app = express();
@@ -10,6 +12,8 @@ var corsOptions = {
 
 app.use(cors(corsOptions));
 
+// parse cookies
+app.use(cookieParser());
 // parse requests of content-type - application/json
 app.use(bodyParser.json());
 
@@ -40,6 +44,7 @@ app.get("/", (req, res) => {
 
 
 require("./app/routes/truths.routes")(app);
+require("./app/routes/auth.routes")(app);
 
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;

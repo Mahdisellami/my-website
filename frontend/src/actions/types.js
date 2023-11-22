@@ -1,0 +1,5 @@
+export const CREATE_TRUTH = "CREATE_TRUTH";
+export const RETRIEVE_TRUTHS = "RETRIEVE_TRUTHS";
+export const UPDATE_TRUTH = "UPDATE_TRUTH";
+export const DELETE_TRUTH = "DELETE_TRUTH";
+export const DELETE_ALL_TRUTHS = "DELETE_ALL_TRUTHS";

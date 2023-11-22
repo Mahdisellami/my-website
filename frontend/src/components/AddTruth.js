@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import TruthsDataService from "../services/TruthsService";
+import { useDispatch } from "react-redux";
+import { createTruth } from "../actions/truths";
 
 const AddTruth = () => {
   const initialTruthState = {
@@ -11,28 +12,27 @@ const AddTruth = () => {
   const [truth, setTruth] = useState(initialTruthState);
   const [submitted, setSubmitted] = useState(false);
 
+  const dispatch = useDispatch();
+
   const handleInputChange = event => {
     const { name, value } = event.target;
     setTruth({ ...truth, [name]: value });
   };
 
   const saveTruth = () => {
-    var data = {
-      text: truth.text,
-      song: truth.song,
-      singer: truth.singer
-    };
+    const { text, singer } = truth;
 
-    TruthsDataService.create(data)
-      .then(response => {
+    dispatch(createTruth(text, singer))
+      .then(data => {
         setTruth({
-          id: response.data.id,
-          text: response.data.text,
-          song: response.data.song,
-          singer: response.data.singer
+          id: data.id,
+          text: data.text,
+          song: data.song,
+          singer: data.singer
         });
         setSubmitted(true);
-        console.log(response.data);
+
+        console.log(data);
       })
       .catch(e => {
         console.log(e);

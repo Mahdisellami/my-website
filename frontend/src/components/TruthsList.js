@@ -1,15 +1,22 @@
 import React, { useState, useEffect } from "react";
-import TruthsDataService from "../services/TruthsService";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  retrieveTruths,
+  findTruthsBySinger,
+  deleteAllTruths,
+} from "../actions/truths";
 import { Link } from "react-router-dom";
 
 const TruthsList = () => {
-  const [truths, setTruths] = useState([]);
-  const [currentTruth, setCurrentTruth] = useState({});
+  const [currentTruth, setCurrentTruth] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(-1);
   const [searchSinger, setSearchSinger] = useState("");
 
+  const truths = useSelector(state => state.truths);
+  const dispatch = useDispatch();
+
   useEffect(() => {
-    retrieveTruths();
+    dispatch(retrieveTruths());
   }, []);
 
   const onChangeSearchSinger = e => {
@@ -17,20 +24,8 @@ const TruthsList = () => {
     setSearchSinger(searchSinger);
   };
 
-  const retrieveTruths = () => {
-    TruthsDataService.getAll()
-      .then(response => {
-        setTruths(response.data);
-        console.log(response.data);
-      })
-      .catch(e => {
-        console.log(e);
-      });
-  };
-
-  const refreshList = () => {
-    retrieveTruths();
-    setCurrentTruth({});
+  const refreshData = () => {
+    setCurrentTruth(null);
     setCurrentIndex(-1);
   };
 
@@ -40,10 +35,10 @@ const TruthsList = () => {
   };
 
   const removeAllTruths = () => {
-    TruthsDataService.removeAll()
+    dispatch(deleteAllTruths())
       .then(response => {
-        console.log(response.data);
-        refreshList();
+        console.log(response);
+        refreshData();
       })
       .catch(e => {
         console.log(e);
@@ -51,15 +46,10 @@ const TruthsList = () => {
   };
 
   const findBySinger = () => {
-    TruthsDataService.findBySinger(searchSinger)
-      .then(response => {
-        setTruths(response.data);
-        console.log(response.data);
-      })
-      .catch(e => {
-        console.log(e);
-      });
+    refreshData();
+    dispatch(findTruthsBySinger(searchSinger));
   };
+
 
 
   return (
@@ -110,7 +100,7 @@ const TruthsList = () => {
         </button>
       </div>
       <div className="col-md-6">
-        {truths ? (
+        {currentTruth ? (
           <div>
             <h4>Truth</h4>
             <div>

@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from 'react-router-dom';
-import TruthsDataService from "../services/TruthsService";
+import { useDispatch } from "react-redux";
+import { updateTruth, deleteTruth } from "../actions/truths";
+import TruthDataService from "../services/TruthsService";
 
-const Truth = props => {
+const Truth = (props) => {
   const { id }= useParams();
   let navigate = useNavigate();
 
@@ -15,8 +17,10 @@ const Truth = props => {
   const [currentTruth, setCurrentTruth] = useState(initialTruthState);
   const [message, setMessage] = useState("");
 
+  const dispatch = useDispatch();
+
   const getTruth = id => {
-    TruthsDataService.get(id)
+    TruthDataService.get(id)
       .then(response => {
         setCurrentTruth(response.data);
         console.log(response.data);
@@ -36,10 +40,11 @@ const Truth = props => {
     setCurrentTruth({ ...currentTruth, [name]: value });
   };
 
-  const updateTruth = () => {
-    TruthsDataService.update(currentTruth.id, currentTruth)
+  const updateContent = () => {
+    dispatch(updateTruth(currentTruth.id, currentTruth))
       .then(response => {
-        console.log(response.data);
+        console.log(response);
+
         setMessage("The truth was updated successfully!");
       })
       .catch(e => {
@@ -47,10 +52,9 @@ const Truth = props => {
       });
   };
 
-  const deleteTruth = () => {
-    TruthsDataService.remove(currentTruth.id)
-      .then(response => {
-        console.log(response.data);
+  const removeTruth = () => {
+    dispatch(deleteTruth(currentTruth.id))
+      .then(() => {
         navigate("/truths");
       })
       .catch(e => {
@@ -78,7 +82,7 @@ const Truth = props => {
             <div className="form-group">
               <label htmlFor="song">Song</label>
               <input
-                type="song"
+                type="text"
                 className="form-control"
                 id="song"
                 name="song"
@@ -89,7 +93,7 @@ const Truth = props => {
             <div className="form-group">
               <label htmlFor="singer">Singer</label>
               <input
-                type="singer"
+                type="text"
                 className="form-control"
                 id="singer"
                 name="singer"
@@ -99,14 +103,15 @@ const Truth = props => {
             </div>
           </form>
 
-          <button className="badge badge-danger mr-2" onClick={deleteTruth}>
+
+          <button className="badge badge-danger mr-2" onClick={removeTruth}>
             Delete
           </button>
 
           <button
             type="submit"
             className="badge badge-success"
-            onClick={updateTruth}
+            onClick={updateContent}
           >
             Update
           </button>
